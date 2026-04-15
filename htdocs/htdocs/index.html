@@ -1,0 +1,785 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, user-scalable=yes"
+    />
+    <title>Techno Mobile | POS System</title>
+    <link rel="icon" type="image/x-icon" href="favicon.ico" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />   
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+ <link rel="stylesheet" href="css/style.css" />
+    <!-- API base — change this if your api/ folder moves -->
+    <script>window.API_BASE = window.location.origin + '/api/'</script>
+  </head>
+  <body>
+    <!-- LOGIN PAGE -->
+    <div id="loginPage" class="login-container">
+      <div class="login-bg-anim">
+        <div class="login-orb orb1"></div>
+        <div class="login-orb orb2"></div>
+        <div class="login-orb orb3"></div>
+        <div class="login-grid-lines"></div>
+      </div>
+      <div class="login-card">
+        <div class="login-brand">
+          <div class="login-icon">TM</div>
+          <div class="login-brand-text">
+            <h1>Techno Mobile</h1>
+            <p>POS Pro System</p>
+          </div>
+        </div>
+        <div class="login-divider"></div>
+        <h2>Welcome Back</h2>
+        <p class="login-subtitle">Sign in to access your dashboard</p>
+        <div class="login-input-group">
+          <label><i class="fas fa-user"></i> Username</label>
+          <input
+            type="text"
+            id="username"
+            placeholder="Enter username"
+            autocomplete="username"
+            onkeydown="if (event.key === 'Enter') login()"
+          />
+        </div>
+        <div class="login-input-group">
+          <label><i class="fas fa-lock"></i> Password</label>
+          <div class="pw-wrap">
+            <input
+              type="password"
+              id="password"
+              placeholder="Enter password"
+              autocomplete="current-password"
+              onkeydown="if (event.key === 'Enter') login()"
+            />
+            <button
+              class="pw-toggle"
+              onclick="togglePassword()"
+              type="button"
+              tabindex="-1"
+            >
+              <i class="fas fa-eye" id="pwEyeIcon"></i>
+            </button>
+          </div>
+        </div>
+        <div id="loginError" class="login-error" style="display: none">
+          <i class="fas fa-exclamation-triangle"></i> Invalid username or
+          password
+        </div>
+        <button class="login-btn" onclick="login()">
+          <i class="fas fa-sign-in-alt"></i> Login to Dashboard
+        </button>
+        <div class="login-footer">
+          Techno Mobile &copy; 2026 &mdash; Billing System
+        </div>
+      </div>
+    </div>
+
+    <!-- MAIN POS SYSTEM -->
+    <div id="posSystem" class="pos-wrapper">
+      <!-- Sidebar -->
+      <div class="pos-sidebar">
+        <div class="sidebar-brand">
+          <div class="brand-icon">TM</div>
+          <div class="brand-text">
+            <h2>Techno Mobile</h2>
+            <p>POS Pro System</p>
+          </div>
+        </div>
+        <nav class="sidebar-nav">
+          <div class="nav-label">MAIN MENU</div>
+          <div class="nav-item active" onclick="switchTab('pos')" id="navPos">
+            <div class="nav-icon"><i class="fas fa-cash-register"></i></div>
+            <span>Point of Sale</span>
+            <div class="nav-indicator"></div>
+          </div>
+          <div class="nav-item" onclick="switchTab('history')" id="navHistory">
+            <div class="nav-icon"><i class="fas fa-receipt"></i></div>
+            <span>Invoice History</span>
+            <div class="nav-indicator"></div>
+          </div>
+          <div
+            class="nav-item"
+            onclick="switchTab('inventory')"
+            id="navInventory"
+          >
+            <div class="nav-icon"><i class="fas fa-boxes"></i></div>
+            <span>Inventory</span>
+            <div class="nav-indicator"></div>
+          </div>
+        </nav>
+        <div class="sidebar-spacer"></div>
+        <div class="sidebar-footer">
+          <div class="user-badge">
+            <div class="user-avatar"><i class="fas fa-user"></i></div>
+            <span id="loggedUser" class="user-name"></span>
+          </div>
+          <div class="sidebar-footer-btns">
+            <button
+              class="icon-btn"
+              onclick="toggleDarkMode()"
+              title="Toggle Dark Mode"
+            >
+              <i class="fas fa-moon" id="darkModeIcon"></i>
+            </button>
+            <button
+              class="icon-btn"
+              onclick="openSettingsModal()"
+              title="Backup & Restore"
+            >
+              <i class="fas fa-database"></i>
+            </button>
+            <button class="logout-btn" onclick="logout()" title="Logout">
+              <i class="fas fa-sign-out-alt"></i> Logout
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mobile Top Bar -->
+      <div class="mobile-topbar">
+        <div class="brand-icon small">TM</div>
+        <span class="mobile-tab-title" id="mobileTabTitle">Point of Sale</span>
+        <div class="mobile-topbar-actions">
+          <button class="icon-btn" onclick="toggleDarkMode()">
+            <i class="fas fa-moon" id="darkModeIconMobile"></i>
+          </button>
+          <button class="icon-btn" onclick="toggleMobileSidebar()">
+            <i class="fas fa-bars"></i>
+          </button>
+        </div>
+      </div>
+      <div
+        class="mobile-sidebar-overlay"
+        id="mobileSidebarOverlay"
+        onclick="toggleMobileSidebar()"
+      ></div>
+
+      <!-- Mobile Bottom Nav -->
+      <div class="mobile-bottom-nav">
+        <div
+          class="mobile-nav-item active"
+          onclick="switchTab('pos')"
+          id="mobileNavPos"
+        >
+          <i class="fas fa-cash-register"></i><span>POS</span>
+        </div>
+        <div
+          class="mobile-nav-item"
+          onclick="switchTab('history')"
+          id="mobileNavHistory"
+        >
+          <i class="fas fa-receipt"></i><span>History</span>
+        </div>
+        <div
+          class="mobile-nav-item"
+          onclick="switchTab('inventory')"
+          id="mobileNavInventory"
+        >
+          <i class="fas fa-boxes"></i><span>Inventory</span>
+        </div>
+      </div>
+
+      <!-- Main Content -->
+      <div class="pos-main">
+        <!-- POS TAB -->
+        <div id="posTab" class="tab-panel">
+          <div class="page-header">
+            <div class="page-header-left">
+              <h1>New Invoice</h1>
+              <p>Create a new sales invoice</p>
+            </div>
+            <div class="invoice-badge">
+              <div class="inv-badge-inner">
+                <span class="inv-label">INVOICE NO.</span>
+                <span class="inv-no mono" id="inNo">—</span>
+              </div>
+              <div class="inv-badge-inner">
+                <span class="inv-label">DATE</span>
+                <span class="inv-date" id="liveDate"></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Customer Details -->
+          <div class="card">
+            <div class="card-title">
+              <i class="fas fa-user-tag"></i> Customer Details
+            </div>
+            <div class="pos-input-grid">
+              <div class="pos-input-group">
+                <span class="pos-label">CUSTOMER NAME</span>
+                <input
+                  type="text"
+                  id="inName"
+                  placeholder="Full name or Walk-in Customer"
+                  class="pos-input"
+                />
+              </div>
+              <div class="pos-input-group">
+                <span class="pos-label">CONTACT NO.</span>
+                <input
+                  type="tel"
+                  id="inPhone"
+                  placeholder="07x xxxxxxx"
+                  class="pos-input"
+                  oninput="validatePhone(this)"
+                  maxlength="10"
+                />
+              </div>
+              <div class="pos-input-group">
+                <span class="pos-label">INVOICE DATE</span>
+                <input type="date" id="inDate" class="pos-input" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Accessories -->
+          <div class="card">
+            <div class="card-title-row">
+              <div class="card-title">
+                <i class="fas fa-plug"></i> Accessories
+              </div>
+              <button class="btn-ghost" onclick="addAcc()">
+                <i class="fas fa-plus"></i> Add Item
+              </button>
+            </div>
+            <div class="pos-acc-grid" id="accGrid">
+              <div class="acc-empty-hint" id="accEmptyHint">
+                <i class="fas fa-boxes"></i>
+                <p>
+                  No accessories loaded. Add items from Inventory or click "Add
+                  Item".
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Devices & Custom Items -->
+          <div class="card">
+            <div class="card-title-row">
+              <div class="card-title">
+                <i class="fas fa-mobile-alt"></i> Devices &amp; Custom Items
+              </div>
+              <button class="btn-ghost" onclick="addDevice()">
+                <i class="fas fa-plus"></i> Add Device
+              </button>
+            </div>
+            <div class="device-table-wrap">
+              <div class="device-header">
+                <div class="device-header-item">Model / Item Name</div>
+                <div class="device-header-item">Storage / Variant</div>
+                <div class="device-header-item">IMEI / Serial No.</div>
+                <div class="device-header-item center">Qty</div>
+                <div class="device-header-item right">Price (Rs.)</div>
+                <div class="device-header-item"></div>
+              </div>
+              <div id="deviceArea"></div>
+            </div>
+            <div class="device-empty-state" id="deviceEmptyState">
+              <i class="fas fa-mobile-alt"></i>
+              <p>
+                No devices added. Click "Add Device" to include a device or
+                custom item.
+              </p>
+            </div>
+          </div>
+
+          <!-- Terms & Conditions -->
+          <div class="card">
+            <div class="card-title-row">
+              <div class="card-title">
+                <i class="fas fa-file-contract"></i> Terms &amp; Conditions
+              </div>
+              <button class="btn-ghost" onclick="addNewTerm()">
+                <i class="fas fa-plus"></i> Add Term
+              </button>
+            </div>
+            <div id="termsContainer" class="terms-container"></div>
+          </div>
+
+          <!-- Billing Summary -->
+          <div class="billing-summary">
+            <div class="summary-header">
+              <i class="fas fa-calculator"></i> Billing Summary
+            </div>
+            <div class="summary-lines">
+              <div class="summary-row">
+                <span class="summary-label">Subtotal</span>
+                <span id="liveSubtotal" class="summary-value">Rs. 0.00</span>
+              </div>
+              <div class="summary-row discount-row">
+                <div class="discount-input-wrap">
+                  <span class="summary-label">Discount (Rs.)</span>
+                  <div class="discount-field">
+                    <input
+                      type="number"
+                      id="inDiscount"
+                      value="0"
+                      min="0"
+                      step="1"
+                      class="discount-input"
+                      placeholder="0"
+                    />
+                    <button class="btn-apply" onclick="applyDiscount()">
+                      Apply
+                    </button>
+                  </div>
+                </div>
+                <span id="liveDiscount" class="discount-amt">- Rs. 0.00</span>
+              </div>
+              <div class="summary-divider"></div>
+              <div class="summary-row total-highlight">
+                <span class="summary-label-lg">TOTAL PAYABLE</span>
+                <span id="liveTotal" class="total-amount">Rs. 0.00</span>
+              </div>
+              <div class="summary-row">
+                <div class="payment-input-wrap">
+                  <span class="summary-label">Payment Received</span>
+                  <div class="payment-field">
+                    <input
+                      type="number"
+                      id="inPayment"
+                      value="0"
+                      min="0"
+                      step="1"
+                      class="payment-input"
+                      placeholder="0"
+                      oninput="updatePayment()"
+                    />
+                    <button class="btn-payment" onclick="setFullPayment()">
+                      Pay Full
+                    </button>
+                  </div>
+                </div>
+                <span id="livePayment" class="payment-amt">Rs. 0.00</span>
+              </div>
+              <div class="summary-row balance-row">
+                <span class="summary-label">Balance Due</span>
+                <span id="liveBalance" class="balance-amt">Rs. 0.00</span>
+              </div>
+            </div>
+            <div class="payment-status-select">
+              <label class="status-label"
+                ><i class="fas fa-tag"></i> Payment Status</label
+              >
+              <div class="status-btns" id="statusBtns">
+                <button
+                  class="status-opt-btn active"
+                  data-value="pending"
+                  onclick="selectStatus('pending')"
+                >
+                  <i class="fas fa-clock"></i> Pending
+                </button>
+                <button
+                  class="status-opt-btn"
+                  data-value="paid"
+                  onclick="selectStatus('paid')"
+                >
+                  <i class="fas fa-check-circle"></i> Paid
+                </button>
+                <button
+                  class="status-opt-btn"
+                  data-value="cancelled"
+                  onclick="selectStatus('cancelled')"
+                >
+                  <i class="fas fa-times-circle"></i> Cancelled
+                </button>
+              </div>
+              <input type="hidden" id="invoiceStatus" value="pending" />
+            </div>
+            <button class="pos-btn-save" onclick="saveInvoice()">
+              <i class="fas fa-save"></i> Save Invoice
+              <span class="save-shortcut">Ctrl+S</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- HISTORY TAB -->
+        <div id="historyTab" class="tab-panel" style="display: none">
+          <div class="page-header">
+            <div class="page-header-left">
+              <h1>Invoice History</h1>
+              <p>Revenue analytics &amp; invoice management</p>
+            </div>
+            <div class="page-header-actions">
+              <div class="search-wrap">
+                <i class="fas fa-search search-icon"></i>
+                <input
+                  type="text"
+                  id="historySearch"
+                  class="search-input"
+                  placeholder="Search name, phone, invoice #..."
+                  oninput="displayHistory()"
+                />
+              </div>
+              <select
+                id="statusFilter"
+                class="filter-select"
+                onchange="displayHistory()"
+              >
+                <option value="all">All Status</option>
+                <option value="paid">Paid</option>
+                <option value="pending">Pending</option>
+                <option value="cancelled">Cancelled</option>
+              </select>
+              <button class="btn-export" onclick="exportHistoryCSV()">
+                <i class="fas fa-file-csv"></i> CSV
+              </button>
+              <button class="btn-danger-outline" onclick="clearHistory()">
+                <i class="fas fa-trash"></i> Clear
+              </button>
+            </div>
+          </div>
+          <div id="historyStats" class="history-stats"></div>
+          <div
+            id="revenueChartContainer"
+            class="card chart-card"
+            style="display: none"
+          >
+            <div class="card-title-row">
+              <div class="card-title">
+                <i class="fas fa-chart-bar"></i> Revenue Overview
+              </div>
+              <div class="chart-tabs">
+                <button
+                  class="chart-tab-btn active"
+                  data-mode="daily"
+                  onclick="setChartMode('daily')"
+                >
+                  Daily
+                </button>
+                <button
+                  class="chart-tab-btn"
+                  data-mode="weekly"
+                  onclick="setChartMode('weekly')"
+                >
+                  Weekly
+                </button>
+                <button
+                  class="chart-tab-btn"
+                  data-mode="monthly"
+                  onclick="setChartMode('monthly')"
+                >
+                  Monthly
+                </button>
+              </div>
+            </div>
+            <div class="chart-wrap"><canvas id="revenueChart"></canvas></div>
+          </div>
+          <div class="history-list" id="historyList"></div>
+        </div>
+
+        <!-- INVENTORY TAB -->
+        <div id="inventoryTab" class="tab-panel" style="display: none">
+          <div class="page-header">
+            <div class="page-header-left">
+              <h1>Inventory</h1>
+              <p>Manage your product catalog</p>
+            </div>
+            <button class="btn-primary" onclick="addInventoryItem()">
+              <i class="fas fa-plus"></i> Add Product
+            </button>
+          </div>
+          <div class="card" style="padding: 0; overflow-x: auto">
+            <table class="inv-table">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th style="text-align: left">Product Name</th>
+                  <th style="text-align: right">Price (Rs.)</th>
+                  <th style="text-align: center">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="inventoryTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SAVE SUCCESS OVERLAY -->
+    <div
+      id="saveSuccessOverlay"
+      class="save-success-overlay"
+      style="display: none"
+    >
+      <div class="save-success-card">
+        <div class="save-success-icon"><i class="fas fa-check-circle"></i></div>
+        <h3>Invoice Saved!</h3>
+        <p id="saveSuccessInvNo" class="save-success-inv"></p>
+        <p class="save-success-sub">
+          Your invoice has been saved. Download the PDF anytime from Invoice
+          History.
+        </p>
+        <div class="save-success-actions">
+          <button
+            class="save-success-btn-history"
+            onclick="closeSaveSuccess('history')"
+          >
+            <i class="fas fa-receipt"></i> View in History
+          </button>
+          <button
+            class="save-success-btn-new"
+            onclick="closeSaveSuccess('pos')"
+          >
+            <i class="fas fa-plus"></i> New Invoice
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAYMENT MODAL -->
+    <div
+      id="paymentModal"
+      class="modal-overlay"
+      style="display: none"
+      onclick="if (event.target === this) closePaymentModal()"
+    >
+      <div class="modal-card">
+        <div class="modal-header">
+          <h3><i class="fas fa-credit-card"></i> Manage Payment</h3>
+          <button class="modal-close" onclick="closePaymentModal()">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="pm-invoice-info">
+            <div
+              style="
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 12px;
+              "
+            >
+              <span class="pm-inv-no" id="pmInvoiceNo"></span>
+              <span
+                style="font-size: 13px; color: var(--text-muted)"
+                id="pmCustomerName"
+              ></span>
+            </div>
+            <div class="pm-amounts">
+              <div class="pm-amount-row">
+                <span>Invoice Total</span><strong id="pmTotal">—</strong>
+              </div>
+              <div class="pm-amount-row">
+                <span>Paid So Far</span><strong id="pmPaid">—</strong>
+              </div>
+              <div class="pm-amount-row">
+                <span>Balance Due</span><strong id="pmBalance">—</strong>
+              </div>
+            </div>
+          </div>
+          <div class="pm-status-group">
+            <p class="pm-section-label">Set Payment Status</p>
+            <div class="pm-status-btns">
+              <button
+                class="pm-status-btn paid"
+                data-status="paid"
+                onclick="pmSetStatus('paid')"
+              >
+                <i class="fas fa-check-circle"></i> Paid in Full
+              </button>
+              <button
+                class="pm-status-btn pending"
+                data-status="pending"
+                onclick="pmSetStatus('pending')"
+              >
+                <i class="fas fa-clock"></i> Partial / Pending
+              </button>
+              <button
+                class="pm-status-btn cancelled"
+                data-status="cancelled"
+                onclick="pmSetStatus('cancelled')"
+              >
+                <i class="fas fa-times-circle"></i> Cancelled
+              </button>
+            </div>
+          </div>
+          <div
+            class="pm-amount-input-row"
+            id="pmAmountRow"
+            style="display: none"
+          >
+            <label>Record Payment Amount (Rs.)</label>
+            <input
+              type="number"
+              id="pmAmount"
+              class="pos-input"
+              placeholder="Enter amount"
+              min="0"
+              step="1"
+            />
+            <p class="pm-hint">
+              <i class="fas fa-info-circle"></i> Enter the amount to add to the
+              current payment.
+            </p>
+          </div>
+          <input type="hidden" id="pmModalIndex" />
+        </div>
+        <div class="modal-footer">
+          <button class="btn-ghost" onclick="closePaymentModal()">
+            Cancel
+          </button>
+          <button class="btn-primary" onclick="savePayment()">
+            <i class="fas fa-save"></i> Save Payment
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- SETTINGS MODAL -->
+    <div
+      id="settingsModal"
+      class="modal-overlay"
+      style="display: none"
+      onclick="if (event.target === this) closeSettingsModal()"
+    >
+      <div class="modal-card">
+        <div class="modal-header">
+          <h3><i class="fas fa-database"></i> Data Backup &amp; Restore</h3>
+          <button class="modal-close" onclick="closeSettingsModal()">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="backup-section">
+            <div class="backup-icon backup-export">
+              <i class="fas fa-cloud-download-alt"></i>
+            </div>
+            <div>
+              <h4>Export Backup</h4>
+              <p>Download all your data as a JSON file.</p>
+              <button
+                class="btn-primary"
+                onclick="
+                  backupData()
+                  closeSettingsModal()
+                "
+              >
+                <i class="fas fa-download"></i> Download Backup
+              </button>
+            </div>
+          </div>
+          <div class="backup-divider"></div>
+          <div class="backup-section">
+            <div class="backup-icon backup-import">
+              <i class="fas fa-cloud-upload-alt"></i>
+            </div>
+            <div>
+              <h4>Restore from Backup</h4>
+              <p>
+                Upload a backup file.
+                <strong>This will replace all current data.</strong>
+              </p>
+              <button
+                class="btn-danger-outline"
+                onclick="
+                  restoreData()
+                  closeSettingsModal()
+                "
+              >
+                <i class="fas fa-upload"></i> Restore Backup
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- HIDDEN PRINT TEMPLATE -->
+    <div id="printTemplate" style="display: none">
+      <div class="print-invoice">
+        <div class="print-header">
+          <div class="print-header-top">
+            <div class="print-brand">
+              <div class="print-brand-icon">TM</div>
+              <div class="print-brand-text">
+                <h1>Techno Mobile</h1>
+                <p>AUTHORIZED RETAIL &amp; REPAIR</p>
+              </div>
+            </div>
+            <div class="print-badge"><h2>INVOICE</h2></div>
+          </div>
+          <div class="print-info">
+            <div class="print-bill-to">
+              <div class="print-label">BILL TO</div>
+              <div class="print-value" id="printCustomerName">
+                Walk-in Customer
+              </div>
+              <div class="print-phone" id="printCustomerPhone">
+                Not Provided
+              </div>
+            </div>
+            <div class="print-invoice-details">
+              <div>
+                <div class="print-label">INVOICE #</div>
+                <div class="print-value" id="printInvoiceNo">INV-001</div>
+              </div>
+              <div>
+                <div class="print-label">DATE</div>
+                <div class="print-value" id="printDate"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="print-body">
+          <div id="printPaymentStatus"></div>
+          <table class="print-table">
+            <thead>
+              <tr>
+                <th style="width: 45%">ITEM DESCRIPTION</th>
+                <th style="width: 10%; text-align: center">QTY</th>
+                <th style="width: 20%; text-align: right">PRICE (Rs.)</th>
+                <th style="width: 25%; text-align: right">TOTAL (Rs.)</th>
+              </tr>
+            </thead>
+            <tbody id="printItemsBody"></tbody>
+          </table>
+          <div class="print-totals">
+            <div class="print-totals-box">
+              <div class="print-total-row">
+                <span>Sub Total</span><span id="printSubTotal">Rs. 0.00</span>
+              </div>
+              <div class="print-total-row">
+                <span>Discount</span><span id="printDiscount">- Rs. 0.00</span>
+              </div>
+              <div class="print-grand-total">
+                <span>Grand Total</span
+                ><span id="printGrandTotal">Rs. 0.00</span>
+              </div>
+            </div>
+          </div>
+          <div class="print-footer">
+            <div class="print-thankyou">
+              <h3>Thank you for your business!</h3>
+              <p>
+                We appreciate your trust in Techno Mobile.<br />For any
+                inquiries, please contact our support team.
+              </p>
+            </div>
+            <div class="print-terms">
+              <h4>Terms &amp; Conditions</h4>
+              <ul id="printTermsList"></ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="toast" class="toast"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="css/script.js"></script>
+    <script src="css/history.js"></script>
+  </body>
+</html>

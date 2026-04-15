@@ -1,0 +1,21 @@
+# ============================================================
+# htdocs/api/.htaccess
+# Upload this file AS ".htaccess" (rename from htaccess.txt)
+# inside the api/ folder on InfinityFree
+# Without this file every PHP call returns 404
+# ============================================================
+
+Options -Indexes
+DirectoryIndex index.php
+
+# Force PHP execution for .php files
+AddHandler application/x-httpd-php .php
+
+# Pass CORS and other headers through
+<IfModule mod_headers.c>
+    Header always set Access-Control-Allow-Origin "*"
+    Header always set Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS"
+    Header always set Access-Control-Allow-Headers "Content-Type, Authorization, X-Requested-With"
+</IfModule>
+
+
